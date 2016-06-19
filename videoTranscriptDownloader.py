@@ -1,5 +1,6 @@
 from lxml import html,etree
 from HTMLParser import HTMLParser
+from pytube import YouTube
 
 import csv
 import os
@@ -25,9 +26,13 @@ def makeDirsIfNeeded(dirName):
     if not os.path.exists(dirName):
         os.makedirs(dirName)
 
-def downloadVideoForId(videoId, videoFilename):
+def downloadVideoForId(videoId, videoDir):
     """ Downloads and saves videos with the given ID """
-    pass
+    videoUrl = "http://youtube.com/watch?v=%s" % videoId
+    videoRsc = YouTube(videoUrl)
+    videoRsc.set_filename("%s" % videoId)
+     # Downloads low resolution mp4 for testing
+    videoRsc.get("mp4", "360p").download(videoDir)
 
 def downloadTranscriptForId(videoId, csvFilename):
     """ Downloads the raw XML transcript for a video and converts it into a
@@ -61,12 +66,11 @@ def downloadAllData(videoIdList, speaker):
     makeDirsIfNeeded(videoDir)
     makeDirsIfNeeded(csvDir)
     for videoId in videoIdList:
-        videoFilename = "%s%s.mp4" % (videoDir, videoId)
         csvFilename = "%s%s.csv" % (csvDir, videoId)
-        downloadVideoForId(videoId, videoFilename)
+        downloadVideoForId(videoId, videoDir)
         downloadTranscriptForId(videoId, csvFilename)
 
-def retrieveVideoIds(channelName, limit=2):
+def retrieveVideoIds(channelName, limit=1):
     """ Retrieves up to `limit` videos and transcripts from the channel """
     channelUrl = "https://www.youtube.com/user/%s/videos" % channelName
     linkStart = "/watch?v="
