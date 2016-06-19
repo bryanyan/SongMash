@@ -26,17 +26,17 @@ for person in people:
 		if '.csv' in word_timing_filename:
 			videoid = word_timing_filename.split('.csv')[0]
 
-			word_timing_filepath = os.path.join(personname, 'word_timing', word_timing_filename)
+			word_timing_filepath = os.path.join(person, 'word_timing', word_timing_filename)
 			with open(word_timing_filepath, 'rb') as word_timing_file:
-				
-				word_timing_reader = csv.reader(word_timing_file, delimeter=',')
+
+				word_timing_reader = csv.reader(word_timing_file, delimiter=',')
 				for row in word_timing_reader:
 					word = row[2]
 					time_start = row[3]
 					length = row[4]
-					is_first_word = row[5]
+					is_first_word = row[5] == 'true'
 
-					if len(word_data[person][videoid][word]) == 0 or (not word_data[person][videoid][word][2] and is_first_word):
+					if len(word_data[person][videoid][word]) == 0 or is_first_word:
 						# overwrite old record if
 						# 1) there's no data
 						# or 2) we found a first word (while the old record was not a first word)
@@ -54,7 +54,9 @@ for personname in word_data:
 		data.sort(key=lambda x: x[1])
 
 		output_filepath = os.path.join(personname, 'splitter_manifest', videoid + '.csv')
+		if not os.path.exists(os.path.join(personname, 'splitter_manifest')):
+		    os.makedirs(os.path.join(personname, 'splitter_manifest'))
 		with open(output_filepath, 'wb') as csvfile:
-			datawriter = csv.writer(csvfile, delimeter=',')
+			datawriter = csv.writer(csvfile, delimiter=',')
 			datawriter.writerow(['start_time', 'length', 'rename_to'])
 			datawriter.writerows(data)

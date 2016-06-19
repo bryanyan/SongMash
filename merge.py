@@ -40,6 +40,9 @@ for i in unique:
 	os.system('ffmpeg -i ' + VIDEO_DIRECTORY + i +
 		' -c copy -f mpegts ' +
 		VIDEO_DIRECTORY + i + '.ts')
+# Remove the previous output file first.
+if os.path.isfile('output.mp4'):
+	os.system('rm output.mp4')
 # Generate the command for concatting the mpegs.
 merge = 'ffmpeg -i "concat:'
 for i in foundFiles:

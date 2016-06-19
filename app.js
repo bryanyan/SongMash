@@ -26,7 +26,7 @@ app.post('/submit_text', function(req, res) {
 		pythonOptions: ['-u'],
 		args: ['body.txt']
 	};
-	PythonShell.run('test.py', options, function(err, results) {
+	PythonShell.run('merge.py', options, function(err, results) {
 		if (err) throw err;
 		console.log('results: %j', results);
 	});
