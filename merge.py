@@ -21,8 +21,8 @@ with open(textFile, 'r') as f:
 	# Generate the list of files.
 	for line in f:
 		# Remove punctuation and whitespace. Add a wait in periods and commas.
-                words = stripped.rstrip().split(' ')
-                words = [word.replace('.', 'X-PAUSE').replace(',', 'X-PAUSE') for word in words]
+                line = line.replace('.', 'XPAUSE').replace(',', ' XPAUSE')
+                words = line.rstrip().split(' ')
                 words = cleanWords(words)
 		for w in words:
                     if len(w) > 0:
