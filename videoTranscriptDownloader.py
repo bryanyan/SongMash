@@ -12,7 +12,7 @@ import requests
 ### Constants
 
 # Documents directory where we can store the downloaded data
-ROOT_DIR = "/Users/Scott/Documents/Hackathons/BattleOfTheHacks/SongMash"
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/"
 CSV_DIR = "phraseCSVs"
 VIDEO_DIR = "fullVideos"
 HEADER_STRING = "phrase,start,duration"
