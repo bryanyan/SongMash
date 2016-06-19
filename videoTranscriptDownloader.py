@@ -8,12 +8,14 @@ import csv
 import os
 import pytube
 import requests
+import sys # sys print function on threads
 
 ### Constants
 
 # Documents directory where we can store the downloaded data
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__)) + "/"
 CSV_DIR = "phraseCSVs"
+TXT_DIR = "fullTexts"
 VIDEO_DIR = "fullVideos"
 HEADER_STRING = "phrase,start,duration"
 
@@ -31,45 +33,60 @@ def makeDirsIfNeeded(dirName):
 def downloadVideoForId(videoId, videoDir):
     """ Downloads and saves videos with the given ID """
     if os.path.exists(videoDir + videoId + ".mp4"):
-        print("Using cached video for " + videoId)
+        sys.stdout.write("Using cached video for " + videoId + "\n")
         return
-    print("Downloading video " + videoId)
+    sys.stdout.write("Downloading video " + videoId + "\n")
     videoUrl = "http://youtube.com/watch?v=%s" % videoId
     videoRsc = YouTube(videoUrl)
     videoRsc.set_filename("%s" % videoId)
      # Downloads low resolution mp4 for testing
     videoRsc.get("mp4", "360p").download(videoDir)
 
-def downloadTranscriptForId(videoId, csvFilename):
+def downloadTranscriptForId(videoId, csvFilename, textFilename):
     """ Downloads the raw XML transcript for a video and converts it into a
         useable CSV file. """
-    print("Downloading transcript for video " + videoId)
+    sys.stdout.write("Downloading transcript for video " + videoId + "\n")
     # Retrieving the transcript will only work on videos with captions enabled
     transcriptUrl = "http://video.google.com/timedtext?lang=en&v=%s" % videoId
     try:
         rawData = requests.get(transcriptUrl)
         xmlTree = etree.fromstring(rawData.content)
     except:
-        print("Failed to get transcript for: %s" % (videoId))
+        sys.stdout.write(">> Failed to get transcript for: %s\n" % (videoId))
     csvString = HEADER_STRING + "\n"
+    textString = ""
     for child in xmlTree:
+        # Remove HTML escapes
         cleanText = decodeHtml(child.text).replace(",","")
+        # Replace newlines with spaces for CSV consistency
+        cleanText = cleanText.replace("\n"," ")
         rowString = "%s,%.3f,%.3f\n" %\
             (cleanText, float(child.get("start")), float(child.get("dur")))
         csvString += rowString
+        # Copy regular text for the text file
+        textString += cleanText + " "
     try:
         f = open(csvFilename, "w")
         f.write(csvString)
         f.close()
     except:
-        print("Failed to write CSV file for: %s" % (videoId))
+        sys.stdout.write(">> Failed to write CSV file for: %s\n" % (videoId))
+    try:
+        f = open(textFilename, "w")
+        f.write(textString)
+        f.close()
+    except:
+        sys.stdout.write(">> Failed to write text file for: %s\n" % (videoId))
+
 
 def downloadAllData(videoIdList, speaker):
     """ Downloads both video and transcript for the given video ID """
-    videoDir = "%s/%s/%s/" % (ROOT_DIR, speaker, VIDEO_DIR)
     csvDir = "%s/%s/%s/" % (ROOT_DIR, speaker, CSV_DIR)
-    makeDirsIfNeeded(videoDir)
+    textDir = "%s/%s/%s/" % (ROOT_DIR, speaker, TXT_DIR)
+    videoDir = "%s/%s/%s/" % (ROOT_DIR, speaker, VIDEO_DIR)
     makeDirsIfNeeded(csvDir)
+    makeDirsIfNeeded(textDir)
+    makeDirsIfNeeded(videoDir)
 
     # Concurrent downloads based on
     # https://docs.python.org/3/library/concurrent.futures.html
@@ -78,8 +95,10 @@ def downloadAllData(videoIdList, speaker):
         ftrs = []
         for videoId in videoIdList:
             csvFilename = "%s%s.csv" % (csvDir, videoId)
+            textFilename = "%s%s.txt" % (textDir, videoId)
             ftrs.append(executor.submit(downloadVideoForId, videoId, videoDir))
-            ftrs.append(executor.submit(downloadTranscriptForId, videoId, csvFilename))
+            ftrs.append(executor.submit(
+                downloadTranscriptForId, videoId, csvFilename, textFilename))
         # Start the load operations and mark each future with its URL
         for future in concurrent.futures.as_completed(ftrs):
             try:
