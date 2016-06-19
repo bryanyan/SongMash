@@ -21,6 +21,9 @@ var mergeBodyText = function(res) {
         args: [tmpTextFile]
     };
     PythonShell.run('merge.py', options, function(err, results) {
+        if (err) {
+            return console.log(err);
+        }
         if (results) {
             console.log('results:');
             for (var result of results) {
