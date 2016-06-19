@@ -1,0 +1,5 @@
+python videoTranscriptDownloader.py
+python time_interpolation.py
+python generate_splitter_manifest.py
+python split.py
+python add_captions.py

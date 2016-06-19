@@ -1,8 +1,8 @@
 # Script #2
 # Assuming CSV in the following format:
-# phrase, time start, duration
+# phrase,time start,duration
 # Output in the following:
-# Video ID, person name, word, time start, length (estimated), isFirstWord
+# word,time start,length(estimated),isFirstWord
 
 from __future__ import division
 from nltk.corpus import cmudict
@@ -85,7 +85,7 @@ def write(origin, destination):
     return
 
 
-# assumes there is a top-level directory named "data" containing everything
+# currently hardcoded to scan the TED directory
 def main():
     checked = set()
     current_path = os.path.dirname(os.path.abspath(__file__))
@@ -101,6 +101,7 @@ def main():
     for data in os.listdir(origin):
         filepath = os.path.join(origin, data)
         if not (filepath in checked): 
+            print "Interpolating " + data
             write(filepath, os.path.join(destination, data))
             checked.add(filepath)
     return
