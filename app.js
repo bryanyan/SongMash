@@ -5,9 +5,6 @@ var path = require('path');
 var PythonShell = require('python-shell');
 var app = express();
 
-var jsdom = require('jsdom');
-var window = jsdom.jsdom().defaultView;
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
