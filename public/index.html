@@ -3,36 +3,82 @@
     <head>
         <meta charset="utf-8">
         <title>SongMash</title>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.min.css">
-        <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
         <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body>
-        <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--12-col">
-                <form action="/submit_text" method="post">
-                    <div>
-                        <div class="mdl-textfield mdl-js-textfield">
-                            <textarea class="mdl-textfield__input" type="text" rows="10" id="textInput" name="texter"></textarea>
-                            <label class="mdl-textfield__label" for="textInput">Input text here!</label>
-                        </div>
-                    </div>
-                    <div>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" formaction="/submit_text" name="pureText">
-                            CREATE FROM TEXT
-                        </button>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" name="songName">
-                            CREATE FROM SONG NAME
-                        </button>
-                    </div>
-                </form>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header
+            mdl-layout--fixed-tabs">
+          <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+              <!-- Title -->
+              <span class="mdl-layout-title">SongMash</span>
             </div>
+            <!-- Tabs -->
+            <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+              <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Custom Text</a>
+              <a href="#fixed-tab-2" class="mdl-layout__tab">Song Lyrics</a>
+              <a href="#fixed-tab-3" class="mdl-layout__tab">TED Generator</a>
+            </div>
+          </header>
+          <main class="mdl-layout__content">
+            <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
+              <div class="page-content">
+              <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col">
+                  <form action="/submit_text" method="post">
+                    <div>
+                      <div class="mdl-textfield mdl-js-textfield">
+                        <textarea class="mdl-textfield__input" type="text" rows="10" id="textInput" name="texter"></textarea>
+                        <label class="mdl-textfield__label" for="textInput">Input text here!</label>
+                      </div>
+                    </div>
+                    <div>
+                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" formaction="/submit_text" name="pureText">
+                                Create From Text
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- End of Custom Text -->
+            </section>
+            <section class="mdl-layout__tab-panel" id="fixed-tab-2">
+              <div class="page-content">
+              <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col">
+                  <form action="/submit_song" method="post">
+                    <div mdl-cell mdl-cell--6-col>
+                      <div class="mdl-textfield mdl-js-textfield">
+                        <textarea class="mdl-textfield__input" type="text" id="artistInput" name="artist"></textarea>
+                        <label class="mdl-textfield__label" for="artistInput">Artist Name</label>
+                      </div>
+                    </div>
+                    <div mdl-cell mdl-cell--6-col>
+                      <div class="mdl-textfield mdl-js-textfield">
+                        <textarea class="mdl-textfield__input" type="text" id="songInput" name="song"></textarea>
+                        <label class="mdl-textfield__label" for="songInput">Song Name</label>
+                      </div>
+                    </div>
+                    <div>
+                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+                                Create from Song, Artist
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- End of song/artist -->
+            </section>
+            <section class="mdl-layout__tab-panel" id="fixed-tab-3">
+              <div class="page-content">TODO</div>
+            </section>
+          </main>
         </div>
+        
+        </div>
+        <!-- Javascript imports -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script defer type="text/javascript" src="https://code.getmdl.io/1.1.3/material.min.js"></script>
     </body>
 </html>
 
-
-
-    
