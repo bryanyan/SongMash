@@ -1,4 +1,5 @@
 import os
+from ffmpy import FFmpeg
 
 OUT_DIRECTORY = 'word_clips'
 
@@ -9,15 +10,18 @@ def splitLine(line, videoid, personname):
         length = params[1]
         # Find the out file name.
         outName = os.path.join(personname, 'word_clips', params[2])
-        split = ('ffmpeg -i ' + os.path.join(personname, 'fullVideos',
-            videoid + '.mp4') + ' -ss ' + start + ' -t ' + length + ' ' + outName)
-        os.system(split)
+        if not os.path.isfile(outName):
+            ff = FFmpeg(
+                inputs={os.path.join(personname, 'fullVideos',
+                    videoid + '.mp4'): None},
+                outputs={outName: '-ss ' + start + ' -t ' + length}
+            )
+            print('Generating ' + outName)
+            ff.run()
 
 def readFiles(personname):
-    # Remove previous files
-    if os.path.exists(os.path.join(personname, 'word_clips')):
-        os.system('rm -r ' + os.path.join(personname, 'word_clips'))
-    os.makedirs(os.path.join(personname, 'word_clips'))
+    if not os.path.exists(os.path.join(personname, 'word_clips')):
+        os.makedirs(os.path.join(personname, 'word_clips'))
 
     manifestPath = os.path.join(personname, 'splitter_manifest')
     csvs = os.listdir(manifestPath)

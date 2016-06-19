@@ -1,6 +1,7 @@
 import os
 import glob
 import sys
+from ffmpy import FFmpeg
 
 VIDEO_DIRECTORY = './TED/word_clips/'
 FILE_TYPE = '.mp4'
@@ -18,10 +19,11 @@ with open(textFile, 'r') as f:
 	# Generate the list of files.
 	for line in f:
 		# Remove punctuation and whitespace. Add a wait in periods and commas.
-		stripped = line.rstrip().replace('.', ' _').replace(',', ' _')
+		stripped = line.rstrip().lower().replace('.', ' _').replace(',', ' _')
 		words = stripped.split(' ')
 		for w in words:
 			files.append(w.rstrip() + FILE_TYPE)
+
 # Append the ending since some audio gets cut off.
 files.append('_' + FILE_TYPE)
 
@@ -37,19 +39,24 @@ unique = list(set(foundFiles))
 
 # Convert to an mpeg format that can be concatted.
 for i in unique:
-	os.system('ffmpeg -i ' + VIDEO_DIRECTORY + i +
-		' -c copy -f mpegts ' +
-		VIDEO_DIRECTORY + i + '.ts')
+	ff = FFmpeg(
+		inputs={VIDEO_DIRECTORY + i: None},
+		outputs={VIDEO_DIRECTORY + i + '.ts': '-c copy -f mpegts'}
+	)
+	ff.run()
 # Remove the previous output file first.
 if os.path.isfile('output.mp4'):
 	os.system('rm output.mp4')
 # Generate the command for concatting the mpegs.
-merge = 'ffmpeg -i "concat:'
+inputs = 'concat:'
 for i in foundFiles:
-	merge += VIDEO_DIRECTORY + i + '.ts|'
-merge = merge[:-1]
-merge += '" -c copy -bsf:a aac_adtstoasc output.mp4'
-os.system(merge)
+	inputs += VIDEO_DIRECTORY + i + '.ts|'
+inputs = inputs[:-1] + ''
+ff = FFmpeg(
+	inputs={inputs: None},
+	outputs={'output.mp4': '-c copy -bsf:a aac_adtstoasc'}
+)
+ff.run()
 # Clean up the intermediate mpegs.
 for i in unique:
 	os.system('rm ' + VIDEO_DIRECTORY + i + '.ts')
