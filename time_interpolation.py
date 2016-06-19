@@ -26,6 +26,7 @@ def parse(content, result):
     lines = content.split("\n")
     for line_num in range(len(lines)):
         if lines[line_num] == "": continue
+        if line_num == 0: continue
         line_list = lines[line_num].split(",")
         # List format: [phrase, time start, duration]
         print line_list
@@ -61,15 +62,21 @@ def write(origin, destination):
 # assumes there is a top-level directory named "data" containing everything
 def main():
     checked = set()
-    for speaker in os.listdir("data/"):
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    current_path = os.path.join(current_path, "TED")
+    # for speaker in os.listdir(current_path):
         # fetch files from here
-        origin = "data"+os.sep+speaker+os.sep+"phraseCSVs"
-        destination = "data"+os.sep+speaker+os.sep+"word_timing"
-        for data in os.listdir(origin):
-            filepath = os.path.join(origin, data)
-            if not (filepath in checked): 
-                write(filepath, os.path.join(destination, data))
-                checked.add(filepath)
+        # origin = current_path+os.sep+speaker+os.sep+"phraseCSVs"
+        # destination = current_path+os.sep+speaker+os.sep+"word_timing"
+    origin = os.path.join(current_path, "phraseCSVs")
+    if not ("word_timing" in os.listdir(current_path)):
+        os.mkdir(os.path.join(current_path, "word_timing"))
+    destination = os.path.join(current_path, "word_timing")
+    for data in os.listdir(origin):
+        filepath = os.path.join(origin, data)
+        if not (filepath in checked): 
+            write(filepath, os.path.join(destination, data))
+            checked.add(filepath)
     return
 
 main()
