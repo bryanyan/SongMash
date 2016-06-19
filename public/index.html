@@ -11,7 +11,7 @@
     </head>
     <body>
         <div class="mdl-grid">
-            <div class="mdl-cell mdl-cell--5-col">
+            <div class="mdl-cell mdl-cell--12-col">
                 <form action="/submit_text" method="post">
                     <div>
                         <div class="mdl-textfield mdl-js-textfield">
@@ -20,16 +20,14 @@
                         </div>
                     </div>
                     <div>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" name="action">
-                            CREATE SONG
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" formaction="/submit_text" name="pureText">
+                            CREATE FROM TEXT
+                        </button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" name="songName">
+                            CREATE FROM SONG NAME
                         </button>
                     </div>
                 </form>
-            </div>
-            <div class="mdl-cell mdel-cell--7-col" id="videoContainer">
-                <video width="380" height="250" controls>
-                    <source src="output.mp4" type="video/mp4">
-                </video>
             </div>
         </div>
     </body>
