@@ -2,7 +2,7 @@ import os
 import glob
 import sys
 
-VIDEO_DIRECTORY = './John_Oliver/word_clips/'
+VIDEO_DIRECTORY = './TED/word_clips/'
 FILE_TYPE = '.mp4'
 
 if len(sys.argv) < 2:

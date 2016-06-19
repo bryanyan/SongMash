@@ -1,4 +1,5 @@
 import csv, os
+import string
 from collections import defaultdict
 
 """
@@ -12,7 +13,7 @@ personname: {
 """
 
 # Change these as needed
-people = ['John_Oliver']
+people = ['TED']
 
 word_data = defaultdict(\
 				lambda : defaultdict(\
@@ -31,16 +32,16 @@ for person in people:
 
 				word_timing_reader = csv.reader(word_timing_file, delimiter=',')
 				for row in word_timing_reader:
-					word = row[2]
-					time_start = row[3]
-					length = row[4]
-					is_first_word = row[5] == 'true'
+					word = row[0].translate(None, string.punctuation).lower()
+					translated = [row[1], row[2]]
+					is_first_word = row[3] == 'True'
 
-					if len(word_data[person][videoid][word]) == 0 or is_first_word:
+					# if len(word_data[person][videoid][word]) == 0 or is_first_word:
+					if is_first_word:
 						# overwrite old record if
 						# 1) there's no data
 						# or 2) we found a first word (while the old record was not a first word)
-						word_data[person][videoid][word] = row[3:6]
+						word_data[person][videoid][word] = translated
 
 
 for personname in word_data:
