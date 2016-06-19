@@ -6,7 +6,7 @@ var path = require('path');
 var XML2JS = require('xml2js').parseString;
 var PythonShell = require('python-shell');
 var app = express();
-var tmpTextFile = 'body.txt';
+var tmpTextFile = 'public/body.txt';
 var markovGenFile = tmpTextFile;
 
 app.use(express.static(path.join(__dirname, 'public')));
