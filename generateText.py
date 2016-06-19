@@ -28,7 +28,8 @@ def generateTEDTalk(minWords=100):
     while len(talk.split()) < minWords:
         talk += markov.generateString()
         talk += ". "
-    return talk
+    # Add applause at the end :)
+    return talk.replace("(Applause)", "") + "(Applause)"
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
