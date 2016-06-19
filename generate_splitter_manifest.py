@@ -48,7 +48,7 @@ for personname in word_data:
 		data = []
 
 		for word in word_data[personname][videoid]:
-			row = word_data[personname][videoid][word][0:2] + [word + '_' + videoid + '.mp4'] # lop off is_first_word
+			row = word_data[personname][videoid][word][0:2] + [word + '.mp4'] # lop off is_first_word
 			data.append(row)
 
 		data.sort(key=lambda x: x[1])
@@ -58,5 +58,4 @@ for personname in word_data:
 		    os.makedirs(os.path.join(personname, 'splitter_manifest'))
 		with open(output_filepath, 'wb') as csvfile:
 			datawriter = csv.writer(csvfile, delimiter=',')
-			datawriter.writerow(['start_time', 'length', 'rename_to'])
 			datawriter.writerows(data)
