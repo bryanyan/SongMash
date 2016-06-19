@@ -21,9 +21,11 @@ var mergeBodyText = function(res) {
         args: [tmpTextFile]
     };
     PythonShell.run('merge.py', options, function(err, results) {
-        console.log('results:');
-        for (var result of results) {
-            console.log(result);
+        if (results) {
+            console.log('results:');
+            for (var result of results) {
+                console.log(result);
+            }
         }
         var file = __dirname + 'output.mp4';
         res.download('output.mp4');
