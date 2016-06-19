@@ -70,7 +70,18 @@
               </div><!-- End of song/artist -->
             </section>
             <section class="mdl-layout__tab-panel" id="fixed-tab-3">
-              <div class="page-content">TODO</div>
+              <div class="page-content">
+              <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col">
+                  <form action="/submit_text" method="post">
+                    <div>
+                      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" formaction="/generate_ted" name="pureText">
+                                Generate new TED Talk
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div><!-- End of Markov Ted -->
             </section>
           </main>
         </div>
