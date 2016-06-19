@@ -15,15 +15,11 @@ def writeFile(path, contents):
     with open(path, "wt") as f:
         return f.write(contents)
 
-
-def parseCSV(path): 
-    pass
-
 def parse(content, result):
     lines = content.split("\n")
     for line_num in range(len(lines)):
         if lines[line_num] == "": continue
-        line_list = lines[line_num].split(", ")
+        line_list = lines[line_num].split(",")
         # List format: [video id, person name, phrase, time start, duration]
         print line_list
         phrase = line_list[2]
@@ -51,10 +47,15 @@ def main():
     parse(file_content, result_list)
     result = ""
     for line in result_list:
-        result = result + ", ".join(line) + "\n"
+        result = result + ",".join(line) + "\n"
     # yes i make assumptions such as the file name will end in .txt
     # yes i'm the definition of bad practice
-    writeFile(path[:len(path)-4]+"_test.txt", result) # TODO temporary
+    writeFile(path[:len(path)-4]+"_test.csv", result) # TODO temporary
+    # TODO currently this just makes a new file with _test appended
+    # should probably make it so that it reads files and
+    # puts them in the right folders
+    
+    return
 
 main()
     
