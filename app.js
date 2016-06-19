@@ -24,9 +24,9 @@ app.post('/submit_text', function(req, res) {
 	};
 	PythonShell.run('merge.py', options, function(err, results) {
 		console.log('results: %j', results);
+		var file = __dirname + 'output.mp4';
+		res.download('output.mp4');
 	});
-	var file = __dirname + 'output.mp4';
-	res.download('output.mp4');
 });
 
 
