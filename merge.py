@@ -1,7 +1,9 @@
+from ffmpy import FFmpeg
+from wordcleaner import cleanWords
+
 import os
 import glob
 import sys
-from ffmpy import FFmpeg
 
 VIDEO_DIRECTORY = './TED/word_clips/'
 FILE_TYPE = '.mp4'
@@ -19,10 +21,12 @@ with open(textFile, 'r') as f:
 	# Generate the list of files.
 	for line in f:
 		# Remove punctuation and whitespace. Add a wait in periods and commas.
-		stripped = line.rstrip().lower().replace('.', ' _').replace(',', ' _')
-		words = stripped.split(' ')
+                words = stripped.rstrip().split(' ')
+                words = [word.replace('.', 'X-PAUSE').replace(',', 'X-PAUSE') for word in words]
+                words = cleanWords(words)
 		for w in words:
-			files.append(w.rstrip() + FILE_TYPE)
+                    if len(w) > 0:
+			  files.append(w + FILE_TYPE)
 
 # Append the ending since some audio gets cut off.
 files.append('_' + FILE_TYPE)

@@ -6,6 +6,7 @@
 
 from __future__ import division
 from nltk.corpus import cmudict
+from wordcleaner  import cleanWords
 
 import string
 import sys
@@ -28,13 +29,6 @@ def readFile(path):
 def writeFile(path, contents):
     with open(path, "wt") as f:
         return f.write(contents)
-
-def isLetterClean(l):
-    return l.isalpha() or l in [",", "-"]
-
-def cleanWords(word_list):
-    """ Removes non-alphabetic characters from words in list. """
-    return [''.join(filter(isLetterClean, word)) for word in word_list]
 
 def parse(content, result):
     lines = content.split("\n")
