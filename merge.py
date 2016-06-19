@@ -1,7 +1,6 @@
 import os
 import glob
 import sys
-import string
 
 VIDEO_DIRECTORY = './word_clips/'
 FILE_TYPE = '.mp4'
@@ -18,8 +17,8 @@ notFound = []
 with open(textFile, 'r') as f:
 	# Generate the list of files.
 	for line in f:
-		# Remove punctuation and whitespace.
-		stripped = line.rstrip().translate(None, string.punctuation)
+		# Remove punctuation and whitespace. Add a wait in periods and commas.
+		stripped = line.rstrip().replace('.', ' _').replace(',', ' _')
 		words = stripped.split(' ')
 		for w in words:
 			files.append(w.rstrip() + FILE_TYPE)
