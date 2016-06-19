@@ -31,5 +31,11 @@ def generateTEDTalk(minWords=100):
     return talk
 
 if __name__ == '__main__':
-    print(generateTEDTalk())
+    if len(sys.argv) > 1:
+        fname = sys.argv[1]
+        fout = open(fname, 'w')
+        fout.write(generateTEDTalk())
+        fout.close()
+    else:
+        print(generateTEDTalk())
 

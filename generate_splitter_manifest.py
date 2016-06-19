@@ -39,8 +39,10 @@ for person in people:
 					# if len(word_data[person][videoid][word]) == 0 or is_first_word:
 					if is_first_word:
 						# overwrite old record if
-						# 1) there's no data
-						# or 2) we found a first word (while the old record was not a first word)
+						# 1) we found a first word (while the old record was not a first word)
+						word_data[person][videoid][word] = translated
+                                        elif not word_data[person][videoid][word]:
+						# or 2) there's no data
 						word_data[person][videoid][word] = translated
 
 

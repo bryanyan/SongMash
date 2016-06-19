@@ -6,7 +6,8 @@ var path = require('path');
 var XML2JS = require('xml2js').parseString;
 var PythonShell = require('python-shell');
 var app = express();
-
+var tmpTextFile = 'body.txt';
+var markovGenFile = tmpTextFile;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -17,18 +18,36 @@ var mergeBodyText = function(res) {
     var options = {
         mode: 'text',
         pythonOptions: ['-u'],
-        args: ['body.txt']
+        args: [tmpTextFile]
     };
     PythonShell.run('merge.py', options, function(err, results) {
-        console.log('results: %j', results);
+        if (results) {
+            console.log('results:');
+            for (var result of results) {
+                console.log(result);
+            }
+        }
         var file = __dirname + 'output.mp4';
         res.download('output.mp4');
     });
 }
 
+var generateMakovText = function(res) {
+    console.log("Writing new TED talk to ", markovGenFile, "...");
+    var options = {
+        mode: 'text',
+        pythonOptions: ['-u'],
+        args: [markovGenFile]
+    };
+    PythonShell.run('generateText.py', options, function(err, results) {
+        console.log('Markov generation results: %j', results);
+        mergeBodyText(res);
+    });
+}
+
 app.post('/submit_text', function(req, res) {
 	var givenText = req.body.texter;
-    fs.writeFile('body.txt', givenText, function(err) {
+    fs.writeFile(tmpTextFile, givenText, function(err) {
         if(err) {
             return console.log(err);
         }
@@ -43,6 +62,7 @@ app.post('/submit_song', function(req, res) {
     var artist = req.body.artist;
     var song = req.body.song;
     CHART_LYRIC_API = CHART_LYRIC_API.replace('\{artistName\}', artist).replace('\{songName\}', song);
+    var originalRes = res;
     request(CHART_LYRIC_API, function (err, res, body) {
         console.log("Searching up song lyrics on Chart Lyric...")
         console.log("  Artist: ", artist, " Song: ", song);
@@ -57,15 +77,19 @@ app.post('/submit_song', function(req, res) {
             var jsonResponse = JSON.parse(JSON.stringify(result));
             var lyrics = jsonResponse.GetLyricResult.Lyric;
             givenText = lyrics[0];
-            fs.writeFile('body.txt', givenText, function(err) {
+            fs.writeFile(tmpTextFile, givenText, function(err) {
                 if(err) {
                     return console.log(err);
                 }
                 console.log("Wrote custom text to body.txt");
-                mergeBodyText(res);
+                mergeBodyText(originalRes);
             });
         });
     });
+});
+
+app.post('/generate_ted', function(req, res) {
+    generateMakovText(res);
 });
 
 var server = app.listen(8080, function() {

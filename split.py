@@ -1,5 +1,9 @@
-import os
 from ffmpy import FFmpeg
+from concurrent.futures import ThreadPoolExecutor
+
+import concurrent.futures
+import os
+import sys
 
 OUT_DIRECTORY = 'word_clips'
 
@@ -16,8 +20,13 @@ def splitLine(line, videoid, personname):
                     videoid + '.mp4'): None},
                 outputs={outName: '-ss ' + start + ' -t ' + length}
             )
-            print('Generating ' + outName)
+            sys.stdout.write('Generating ' + outName + '\n')
             ff.run()
+
+def processFile(manifestPath, personname, fileName):
+    with open(os.path.join(manifestPath, fileName), 'r') as f:
+        for l in f:
+            splitLine(l, fileName[:-4], personname)
 
 def readFiles(personname):
     if not os.path.exists(os.path.join(personname, 'word_clips')):
@@ -25,9 +34,23 @@ def readFiles(personname):
 
     manifestPath = os.path.join(personname, 'splitter_manifest')
     csvs = os.listdir(manifestPath)
-    for fileName in csvs:
-        with open(os.path.join(manifestPath, fileName), 'r') as f:
-            for l in f:
-                splitLine(l, fileName[:-4], personname)
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        # Download the videos on separate threads
+        ftrs = []
+        for fileName in csvs:
+            ftrs.append(executor.submit(processFile, manifestPath, personname, fileName))
+        # Start the load operations and mark each future with its URL
+        for future in concurrent.futures.as_completed(ftrs):
+            try:
+                # Wait for thread to finish
+                future.result()
+            except Exception as exc:
+                sys.stdout.write('generated an exception: %s' % (exc))
+        print("All threads completed!")
+
+
+
+
 
 readFiles('TED')
