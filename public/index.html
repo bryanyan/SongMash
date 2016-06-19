@@ -11,20 +11,25 @@
     </head>
     <body>
         <div class="mdl-grid">
-            <div class="mdl-layout-spacer">
+            <div class="mdl-cell mdl-cell--5-col">
                 <form action="/submit_text" method="post">
-                    <div class="mdl-cell mdl-cell--6-col">
+                    <div>
                         <div class="mdl-textfield mdl-js-textfield">
                             <textarea class="mdl-textfield__input" type="text" rows="10" id="textInput" name="texter"></textarea>
                             <label class="mdl-textfield__label" for="textInput">Input text here!</label>
                         </div>
                     </div>
-                    <div class="mdl-cell mdl-cell-2-col">
+                    <div>
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" name="action">
                             CREATE SONG
                         </button>
                     </div>
                 </form>
+            </div>
+            <div class="mdl-cell mdel-cell--7-col" id="videoContainer">
+                <video width="380" height="250" controls>
+                    <source src="output.mp4" type="video/mp4">
+                </video>
             </div>
         </div>
     </body>

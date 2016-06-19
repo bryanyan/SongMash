@@ -5,13 +5,12 @@ var path = require('path');
 var PythonShell = require('python-shell');
 var app = express();
 
+var jsdom = require('jsdom');
+var window = jsdom.jsdom().defaultView;
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
-
-
-app.use('/index.html', function(req, res) {
-    res.sendFile(__dirname + '/views/index.html');
-});
 
 
 app.post('/submit_text', function(req, res) {
@@ -27,10 +26,12 @@ app.post('/submit_text', function(req, res) {
 		args: ['body.txt']
 	};
 	PythonShell.run('merge.py', options, function(err, results) {
-		if (err) throw err;
 		console.log('results: %j', results);
 	});
+	var file = __dirname + 'output.mp4';
+	res.download('output.mp4');
 });
+
 
 var server = app.listen(8080, function() {
 	var addr = server.address();
