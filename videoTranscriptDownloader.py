@@ -1,7 +1,9 @@
 from lxml import html,etree
 from HTMLParser import HTMLParser
 from pytube import YouTube
+from concurrent.futures import ThreadPoolExecutor
 
+import concurrent.futures
 import csv
 import os
 import pytube
@@ -28,6 +30,10 @@ def makeDirsIfNeeded(dirName):
 
 def downloadVideoForId(videoId, videoDir):
     """ Downloads and saves videos with the given ID """
+    if os.path.exists(videoDir + videoId + ".mp4"):
+        print("Using cached video for " + videoId)
+        return
+    print("Downloading video " + videoId)
     videoUrl = "http://youtube.com/watch?v=%s" % videoId
     videoRsc = YouTube(videoUrl)
     videoRsc.set_filename("%s" % videoId)
@@ -37,8 +43,7 @@ def downloadVideoForId(videoId, videoDir):
 def downloadTranscriptForId(videoId, csvFilename):
     """ Downloads the raw XML transcript for a video and converts it into a
         useable CSV file. """
-    print("Downloading transcript for video " + str(videoId))
-
+    print("Downloading transcript for video " + videoId)
     # Retrieving the transcript will only work on videos with captions enabled
     transcriptUrl = "http://video.google.com/timedtext?lang=en&v=%s" % videoId
     try:
@@ -65,12 +70,26 @@ def downloadAllData(videoIdList, speaker):
     csvDir = "%s/%s/%s/" % (ROOT_DIR, speaker, CSV_DIR)
     makeDirsIfNeeded(videoDir)
     makeDirsIfNeeded(csvDir)
-    for videoId in videoIdList:
-        csvFilename = "%s%s.csv" % (csvDir, videoId)
-        downloadVideoForId(videoId, videoDir)
-        downloadTranscriptForId(videoId, csvFilename)
 
-def retrieveVideoIds(channelName, limit=1):
+    # Concurrent downloads based on
+    # https://docs.python.org/3/library/concurrent.futures.html
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        # Download the videos on separate threads
+        ftrs = []
+        for videoId in videoIdList:
+            csvFilename = "%s%s.csv" % (csvDir, videoId)
+            ftrs.append(executor.submit(downloadVideoForId, videoId, videoDir))
+            ftrs.append(executor.submit(downloadTranscriptForId, videoId, csvFilename))
+        # Start the load operations and mark each future with its URL
+        for future in concurrent.futures.as_completed(ftrs):
+            try:
+                # Wait for thread to finish
+                future.result()
+            except Exception as exc:
+                print('generated an exception: %s' % (exc))
+        print("All threads completed!")
+
+def retrieveVideoIds(channelName, limit=10):
     """ Retrieves up to `limit` videos and transcripts from the channel """
     channelUrl = "https://www.youtube.com/user/%s/videos" % channelName
     linkStart = "/watch?v="
